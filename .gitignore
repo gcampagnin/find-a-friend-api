@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Build and cache artifacts
+dist/
+build/
+coverage/
+.turbo/
+.next/
+.vitest/
+*.tsbuildinfo
+/tmp/
+/temp/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment and local config
+.env
+.env.local
+.env.*.local
+.env.test
+.env.development
+.env.production
+.DS_Store
+.idea/
+.vscode/
+
+# Prisma SQLite databases
+prisma/*.db
+prisma/*.db-journal
+
+# Misc
+*.swp
