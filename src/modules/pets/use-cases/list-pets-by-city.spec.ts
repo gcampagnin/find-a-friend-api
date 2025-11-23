@@ -203,15 +203,8 @@ describe('ListPetsByCityUseCase', () => {
     const firstPetCreatedAt = new Date('2023-01-01T00:00:00.000Z')
     const secondPetCreatedAt = new Date('2024-01-01T00:00:00.000Z')
 
-    const firstPetIndex = petsRepository.items.findIndex(
-      (pet) => pet.id === firstPet.pet.id,
-    )
-    const secondPetIndex = petsRepository.items.findIndex(
-      (pet) => pet.id === secondPet.pet.id,
-    )
-
-    petsRepository.items[firstPetIndex].created_at = firstPetCreatedAt
-    petsRepository.items[secondPetIndex].created_at = secondPetCreatedAt
+    petsRepository.setCreatedAtForTest(firstPet.pet.id, firstPetCreatedAt)
+    petsRepository.setCreatedAtForTest(secondPet.pet.id, secondPetCreatedAt)
 
     const { pets } = await sut.execute({
       city: 'Porto Alegre',
