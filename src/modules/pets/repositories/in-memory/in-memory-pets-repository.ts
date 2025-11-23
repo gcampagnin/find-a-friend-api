@@ -15,6 +15,14 @@ export class InMemoryPetsRepository implements PetsRepository {
 
   constructor(private orgsRepository: OrgsRepository) {}
 
+  setCreatedAtForTest(petId: string, createdAt: Date) {
+    const index = this.items.findIndex((pet) => pet.id === petId)
+
+    if (index >= 0) {
+      this.items[index].created_at = createdAt
+    }
+  }
+
   async create(data: Prisma.PetCreateInput) {
     if (!data.org?.connect?.id) {
       throw new Error('Org reference is required')
@@ -85,7 +93,11 @@ export class InMemoryPetsRepository implements PetsRepository {
       return true
     })
 
-    const paginated = filtered.slice((page - 1) * pageSize, page * pageSize)
+    const paginated = filtered
+      .sort(
+        (petA, petB) => petB.created_at.getTime() - petA.created_at.getTime(),
+      )
+      .slice((page - 1) * pageSize, page * pageSize)
 
     const petsWithOrg: PetWithOrg[] = []
 
