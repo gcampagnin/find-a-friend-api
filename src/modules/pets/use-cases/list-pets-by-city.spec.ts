@@ -159,4 +159,66 @@ describe('ListPetsByCityUseCase', () => {
 
     expect(pets).toHaveLength(10)
   })
+
+  it('should order pets by newest first when paginating', async () => {
+    const { org } = await registerOrg.execute({
+      name: 'Happy Pets',
+      email: 'contact@happypets.org',
+      password: '123456',
+      address: 'Street 1',
+      cep: '12345000',
+      whatsapp: '555199999999',
+    })
+
+    const firstPet = await registerPet.execute({
+      orgId: org.id,
+      name: 'Older Pet',
+      species: 'dog',
+      description: 'Friendly dog',
+      city: 'Porto Alegre',
+      age: 'ADULT',
+      size: 'MEDIUM',
+      energyLevel: 'MEDIUM',
+      independenceLevel: 'MEDIUM',
+      environment: 'SMALL',
+      requirements: [],
+      photos: [],
+    })
+
+    const secondPet = await registerPet.execute({
+      orgId: org.id,
+      name: 'Newest Pet',
+      species: 'dog',
+      description: 'Playful dog',
+      city: 'Porto Alegre',
+      age: 'PUPPY',
+      size: 'SMALL',
+      energyLevel: 'HIGH',
+      independenceLevel: 'HIGH',
+      environment: 'LARGE',
+      requirements: [],
+      photos: [],
+    })
+
+    const firstPetCreatedAt = new Date('2023-01-01T00:00:00.000Z')
+    const secondPetCreatedAt = new Date('2024-01-01T00:00:00.000Z')
+
+    const firstPetIndex = petsRepository.items.findIndex(
+      (pet) => pet.id === firstPet.pet.id,
+    )
+    const secondPetIndex = petsRepository.items.findIndex(
+      (pet) => pet.id === secondPet.pet.id,
+    )
+
+    petsRepository.items[firstPetIndex].created_at = firstPetCreatedAt
+    petsRepository.items[secondPetIndex].created_at = secondPetCreatedAt
+
+    const { pets } = await sut.execute({
+      city: 'Porto Alegre',
+      pagination: { page: 1, pageSize: 1 },
+    })
+
+    expect(pets).toHaveLength(1)
+    expect(pets[0].name).toBe('Newest Pet')
+  })
 })

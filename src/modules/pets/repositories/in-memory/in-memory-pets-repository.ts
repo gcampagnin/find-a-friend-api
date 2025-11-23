@@ -85,7 +85,11 @@ export class InMemoryPetsRepository implements PetsRepository {
       return true
     })
 
-    const paginated = filtered.slice((page - 1) * pageSize, page * pageSize)
+    const paginated = filtered
+      .sort(
+        (petA, petB) => petB.created_at.getTime() - petA.created_at.getTime(),
+      )
+      .slice((page - 1) * pageSize, page * pageSize)
 
     const petsWithOrg: PetWithOrg[] = []
 
